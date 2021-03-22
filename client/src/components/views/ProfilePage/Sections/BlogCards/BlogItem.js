@@ -1,22 +1,37 @@
 import React from 'react';
 import { editBlogPopup } from '../../../../../_actions/render_actions';
 import { useDispatch } from 'react-redux';
-
+import {
+  deleteBlog,
+  setAddOrEdit,
+  setCurrentBlog,
+  getBlogs,
+} from '../../../../../_actions/blog_actions';
+import { Link } from 'react-router-dom';
+import sprite from '../../../../../img/sprite.svg';
 function BlogItem({ blog }) {
   const dispatch = useDispatch();
+
+  const onClickView = () => {
+    dispatch(setCurrentBlog(blog));
+  };
   const onClickEdit = () => {
     dispatch(editBlogPopup());
-    setAddOrEdit(false);
+    dispatch(setAddOrEdit(false));
+    dispatch(setCurrentBlog(blog));
   };
-  const backgroundImage = `/uploads/${blog.userId}/${blog.image}`;
+
+  const onClickDelete = () => {
+    dispatch(deleteBlog(blog));
+    setTimeout(() => {
+      dispatch(getBlogs());
+    }, 500);
+  };
+  const backgroundImage = `/uploads/${blog.userId}/blog/${blog.image}`;
   return (
-    <div
-      style={{ textDecoration: 'none' }}
-      href='/services#modern'
-      className=' blog__item'
-    >
-      <div className='heading-4__section'>
-        <h4 className='heading-4'>{blog.title}</h4>
+    <div className=' blog__item'>
+      <div className='blog__title-section'>
+        <h4 className='blog__title'>{blog.title}</h4>
       </div>
       <img
         className='blog__background'
@@ -24,19 +39,26 @@ function BlogItem({ blog }) {
         alt='blog background'
       />
       <div className='blog__item__hover-gradient'>
-        <a
+        <svg
+          className='blog__item__button blog__item__button--trash'
+          onClick={onClickDelete}
+        >
+          <use href={sprite + '#trash'}></use>
+        </svg>
+        <Link
           className='blog__item__button blog__item__button--view'
-          style={{ textDecoration: 'none' }}
+          to='/blog'
+          style={{ color: '#fff' }}
+          onClick={onClickView}
         >
-          <p className='blog__button-text'>View Blog</p>
-        </a>
+          View Blog
+        </Link>
         <a
+          href='#!'
           className='blog__item__button blog__item__button--edit'
-          style={{ textDecoration: 'none' }}
+          onClick={onClickEdit}
         >
-          <p onClick={onClickEdit} className='blog__button-text'>
-            Edit Blog
-          </p>
+          <p>Edit Blog</p>
         </a>
       </div>
     </div>

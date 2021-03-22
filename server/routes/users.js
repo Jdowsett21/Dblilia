@@ -128,7 +128,6 @@ router.get('/logout', auth, (req, res) => {
 });
 
 router.put('/update', auth, (req, res) => {
-  console.log(req.body);
   User.findOneAndUpdate(
     { _id: req.user._id },
     {
@@ -158,6 +157,7 @@ router.patch(
     fs.readdir(filePath, (err, files) => {
       if (err) throw err;
       files.filter((file) => {
+        // must search through files as file might not exists
         // filtering out most recent upload
         if (file !== req.file.originalname)
           // if file is not newest upload then delete the file

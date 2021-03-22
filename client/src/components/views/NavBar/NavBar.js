@@ -3,51 +3,59 @@ import LeftMenu from './Sections/LeftMenu';
 import RightMenu from './Sections/RightMenu';
 import { Drawer, Button, Icon } from 'antd';
 import './Sections/Navbar.css';
+import Logo from '../../../img/logo.png';
 
 function NavBar() {
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(false);
 
   const showDrawer = () => {
-    setVisible(true)
+    setVisible(true);
   };
 
   const onClose = () => {
-    setVisible(false)
+    setVisible(false);
   };
 
   return (
-    <nav className="menu" style={{ position: 'fixed', zIndex: 5, width: '100%' }}>
-      <div className="menu__logo">
-        <a href="/">Logo</a>
+    <nav
+      className='menu'
+      style={{ position: 'fixed', zIndex: 5, width: '100%' }}
+    >
+      <div className='menu__logo'>
+        <img
+          src={Logo}
+          alt='logo'
+          style={{ width: '5rem', height: '5rem', marginTop: '.5rem' }}
+        />
       </div>
-      <div className="menu__container">
-        <div className="menu_left">
-          <LeftMenu mode="horizontal" />
+      <div className='menu__container'>
+        <div className='menu_left'>
+          <LeftMenu mode='horizontal' />
         </div>
-        <div className="menu_rigth">
-          <RightMenu mode="horizontal" />
+        <div className='menu_rigth'>
+          <RightMenu mode='horizontal' />
         </div>
         <Button
-          className="menu__mobile-button"
-          type="primary"
+          className='menu__mobile-button'
+          type='primary'
           onClick={showDrawer}
         >
-          <Icon type="align-right" />
+          <Icon type='align-right' />
         </Button>
         <Drawer
-          title="Basic Drawer"
-          placement="right"
-          className="menu_drawer"
+          title='Basic Drawer'
+          placement='right'
+          className='menu_drawer'
           closable={false}
           onClose={onClose}
           visible={visible}
         >
-          <LeftMenu mode="inline" />
-          <RightMenu mode="inline" />
+          <LeftMenu mode='inline' />
+          <RightMenu mode='inline' />
         </Drawer>
       </div>
     </nav>
-  )
+  );
 }
 
-export default NavBar
+export default NavBar;

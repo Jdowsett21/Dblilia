@@ -23,4 +23,6 @@ export const UPDATE_BLOG = 'update_blog';
 export const GET_BLOG = 'get_blog';
 export const DELETE_BLOG = 'delete_image';
 
-export const SET_TITLE = 'set_title';
+export const SET_CURRENT_BLOG = 'set_current_blog';
+
+export const ADD_OR_EDIT_BLOG = 'add_or_edit_blog';

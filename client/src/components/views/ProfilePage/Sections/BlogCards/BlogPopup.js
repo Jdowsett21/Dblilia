@@ -1,44 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { connect } from 'react-redux';
 import {
-  setBlogTitle,
   getBlogs,
   updateBlog,
   addBlog,
+  setCurrentBlog,
 } from '../../../../../_actions/blog_actions';
 import { editBlogPopup } from '../../../../../_actions/render_actions';
 
-function BlogPopup({ blog: { title }, addOrEdit }) {
+function BlogPopup({ blog: { currentBlog, addOrEdit } }) {
   const dispatch = useDispatch();
   const [file, setFileName] = useState('');
+  const [title, setTitle] = useState('');
 
+  useEffect(() => {
+    setTitle(currentBlog === '' ? '' : currentBlog.title);
+  }, [currentBlog]);
   const onChangeFile = (e) => {
     setFileName(e.target.files[0]);
   };
 
   const onChangeTitle = (e) => {
-    dispatch(setBlogTitle(e.target.value));
+    setTitle(e.target.value);
   };
 
   const onClose = () => {
     setFileName('');
-    dispatch(setBlogTitle(''));
+    dispatch(setCurrentBlog(''));
     dispatch(editBlogPopup());
   };
+
   const changeOnClick = (e) => {
     e.preventDefault();
+    console.log(
+      '🚀 ~ file: BlogPopup.js ~ line 52 ~ changeOnClick ~ e.target.value',
+      e.target.value
+    );
 
-    if (file !== '') {
+    if (title !== '' || file !== '') {
+      const blog = {
+        image: file,
+        title: title,
+      };
       addOrEdit
-        ? dispatch(addBlog(file, title))
-        : dispatch(updateBlog(file, title));
+        ? dispatch(addBlog(blog))
+        : dispatch(updateBlog(blog, currentBlog._id));
       dispatch(editBlogPopup());
-      dispatch(getBlogs());
+      setTimeout(() => {
+        dispatch(getBlogs());
+      }, 500);
     }
+
     e.target.value = null;
     setFileName('');
-    setBlogTitle('');
+    setTitle('');
+    setCurrentBlog('');
   };
   return (
     <>
@@ -50,9 +67,7 @@ function BlogPopup({ blog: { title }, addOrEdit }) {
         <button className='popup__close' onClick={onClose}>
           &times;
         </button>
-        <label htmlFor className='image__label'>
-          Upload Title
-        </label>
+        <label className='image__label'>Upload Title</label>
         <input
           type='input'
           placeholder={title}

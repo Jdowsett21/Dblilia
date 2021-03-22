@@ -73,15 +73,12 @@ function EditProfileCard(props) {
           {(props) => {
             const {
               values,
-
               touched,
               errors,
-              dirty,
               isSubmitting,
               handleChange,
               handleBlur,
               handleSubmit,
-              handleReset,
             } = props;
             return (
               <Form
@@ -168,7 +165,5 @@ function EditProfileCard(props) {
     </div>
   );
 }
-const mapStatetoProps = (state) => ({
-  userData: state.user.userData,
-});
+
 export default EditProfileCard;

@@ -9,7 +9,7 @@ function ProfileCard({ render: { editProfile, editImage }, user }) {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(auth());
-  }, [editProfile, editImage]);
+  }, [editProfile, editImage, dispatch]);
 
   return (
     <div className='profile-card'>

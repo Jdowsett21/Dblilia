@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import ImagePopup from './ImagePopup';
 import { useDispatch } from 'react-redux';
@@ -26,6 +26,7 @@ function ProfileImage({ userData, render: { editProfile, editImage } }) {
         />
 
         <a
+          href='#!'
           onClick={onClick}
           className={
             editProfile

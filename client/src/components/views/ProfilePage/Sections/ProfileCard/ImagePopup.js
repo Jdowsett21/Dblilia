@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Redirect } from 'react-router';
 import { updateProfileImage, auth } from '../../../../../_actions/user_actions';
 import { editImagePopup } from '../../../../../_actions/render_actions';
 function ImagePopup(props) {
   const dispatch = useDispatch();
   const [file, setFileName] = useState('');
   const onChangeFile = (e) => {
+    e.preventDefault();
     setFileName(e.target.files[0]);
   };
 
-  const onClose = () => {
+  const onClose = (e) => {
+    e.preventDefault();
+    e.stopPropogation();
     setFileName('');
     dispatch(editImagePopup());
   };
