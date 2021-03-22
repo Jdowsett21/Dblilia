@@ -1,4 +1,3 @@
-import axios from 'axios';
 import {
   SET_CURRENT_BLOG,
   ADD_BLOG,
@@ -8,14 +7,16 @@ import {
   ADD_OR_EDIT_BLOG,
 } from './types';
 import FormData from 'form-data';
+import { fetch } from '../hoc/baseUrl';
 
 export function addBlog(blog) {
+  console.log(fetch);
   const formData = new FormData();
   formData.append('blogImage', blog.image);
   formData.append('title', blog.title);
 
-  const request = axios
-    .post(`${process.env.BLOG_SERVER}/createBlog`, formData, {
+  const request = fetch
+    .post(`/blog/createBlog`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
     .then((response) => response.data);
@@ -27,8 +28,8 @@ export function addBlog(blog) {
 }
 
 export function deleteBlog(blog) {
-  const request = axios
-    .delete(`${process.env.BLOG_SERVER}/deleteBlog/${blog._id}`)
+  const request = fetch
+    .delete(`/blog/deleteBlog/${blog._id}`)
     .then((response) => response.data);
 
   return {
@@ -38,9 +39,7 @@ export function deleteBlog(blog) {
 }
 
 export function getBlogs() {
-  const request = axios
-    .get(`${process.env.BLOG_SERVER}/getBlogs`)
-    .then((response) => response.data);
+  const request = fetch.get(`/blog/getBlogs`).then((response) => response.data);
 
   return {
     type: GET_BLOG,
@@ -58,8 +57,8 @@ export function updateBlog(blog, blogId) {
   formData.append('blogImage', blog.image);
   formData.append('title', blog.title);
 
-  const request = axios
-    .patch(`${process.env.BLOG_SERVER}/updateBlog/${blogId}`, formData, {
+  const request = fetch
+    .patch(`/blog/updateBlog/${blogId}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
     .then((response) => response.data);

@@ -8,10 +8,10 @@ import {
   UPDATE_USER_IMAGE,
 } from './types';
 import FormData from 'form-data';
-
+import { fetch } from '../hoc/baseUrl';
 export function registerUser(dataToSubmit) {
-  const request = axios
-    .post(`${process.env.USER_SERVER}/register`, dataToSubmit)
+  const request = fetch
+    .post(`/users/register`, dataToSubmit)
     .then((response) => response.data);
 
   return {
@@ -21,8 +21,8 @@ export function registerUser(dataToSubmit) {
 }
 
 export function loginUser(dataToSubmit) {
-  const request = axios
-    .post(`${process.env.USER_SERVER}/login`, dataToSubmit)
+  const request = fetch
+    .post(`/users/login`, dataToSubmit)
     .then((response) => response.data);
 
   return {
@@ -32,9 +32,7 @@ export function loginUser(dataToSubmit) {
 }
 
 export function auth() {
-  const request = axios
-    .get(`${process.env.USER_SERVER}/auth`)
-    .then((response) => response.data);
+  const request = fetch.get(`/users/auth`).then((response) => response.data);
 
   return {
     type: AUTH_USER,
@@ -43,9 +41,7 @@ export function auth() {
 }
 
 export function logoutUser() {
-  const request = axios
-    .get(`${process.env.USER_SERVER}/logout`)
-    .then((response) => response.data);
+  const request = fetch.get(`/users/logout`).then((response) => response.data);
 
   return {
     type: LOGOUT_USER,
@@ -58,8 +54,8 @@ export function updateUser(dataToSubmit) {
     '🚀 ~ file: user_actions.js ~ line 58 ~ updateUser ~ dataToSubmit',
     dataToSubmit
   );
-  const request = axios
-    .put(`${process.env.USER_SERVER}/update`, dataToSubmit)
+  const request = fetch
+    .put(`/users/update`, dataToSubmit)
     .then((response) => response.data);
   return {
     type: UPDATE_USER,
@@ -71,8 +67,8 @@ export function updateProfileImage(values) {
   const formData = new FormData();
   formData.append('profileImage', values);
 
-  const request = axios
-    .patch(`${process.env.USER_SERVER}/uploadProfile`, formData, {
+  const request = fetch
+    .patch(`/users/uploadProfile`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
     .then((response) => response.data);
