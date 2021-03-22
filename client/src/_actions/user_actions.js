@@ -7,12 +7,11 @@ import {
   UPDATE_USER,
   UPDATE_USER_IMAGE,
 } from './types';
-import { USER_SERVER } from '../components/Config.js';
 import FormData from 'form-data';
 
 export function registerUser(dataToSubmit) {
   const request = axios
-    .post(`${USER_SERVER}/register`, dataToSubmit)
+    .post(`${process.env.USER_SERVER}/register`, dataToSubmit)
     .then((response) => response.data);
 
   return {
@@ -23,7 +22,7 @@ export function registerUser(dataToSubmit) {
 
 export function loginUser(dataToSubmit) {
   const request = axios
-    .post(`${USER_SERVER}/login`, dataToSubmit)
+    .post(`${process.env.USER_SERVER}/login`, dataToSubmit)
     .then((response) => response.data);
 
   return {
@@ -34,7 +33,7 @@ export function loginUser(dataToSubmit) {
 
 export function auth() {
   const request = axios
-    .get(`${USER_SERVER}/auth`)
+    .get(`${process.env.USER_SERVER}/auth`)
     .then((response) => response.data);
 
   return {
@@ -45,7 +44,7 @@ export function auth() {
 
 export function logoutUser() {
   const request = axios
-    .get(`${USER_SERVER}/logout`)
+    .get(`${process.env.USER_SERVER}/logout`)
     .then((response) => response.data);
 
   return {
@@ -60,7 +59,7 @@ export function updateUser(dataToSubmit) {
     dataToSubmit
   );
   const request = axios
-    .put(`${USER_SERVER}/update`, dataToSubmit)
+    .put(`${process.env.USER_SERVER}/update`, dataToSubmit)
     .then((response) => response.data);
   return {
     type: UPDATE_USER,
@@ -73,7 +72,7 @@ export function updateProfileImage(values) {
   formData.append('profileImage', values);
 
   const request = axios
-    .patch(`${USER_SERVER}/uploadProfile`, formData, {
+    .patch(`${process.env.USER_SERVER}/uploadProfile`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
     .then((response) => response.data);

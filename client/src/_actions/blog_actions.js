@@ -7,7 +7,6 @@ import {
   GET_BLOG,
   ADD_OR_EDIT_BLOG,
 } from './types';
-import { BLOG_SERVER } from '../components/Config.js';
 import FormData from 'form-data';
 
 export function addBlog(blog) {
@@ -16,7 +15,7 @@ export function addBlog(blog) {
   formData.append('title', blog.title);
 
   const request = axios
-    .post(`${BLOG_SERVER}/createBlog`, formData, {
+    .post(`${process.env.BLOG_SERVER}/createBlog`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
     .then((response) => response.data);
@@ -29,7 +28,7 @@ export function addBlog(blog) {
 
 export function deleteBlog(blog) {
   const request = axios
-    .delete(`${BLOG_SERVER}/deleteBlog/${blog._id}`)
+    .delete(`${process.env.BLOG_SERVER}/deleteBlog/${blog._id}`)
     .then((response) => response.data);
 
   return {
@@ -40,7 +39,7 @@ export function deleteBlog(blog) {
 
 export function getBlogs() {
   const request = axios
-    .get(`${BLOG_SERVER}/getBlogs`)
+    .get(`${process.env.BLOG_SERVER}/getBlogs`)
     .then((response) => response.data);
 
   return {
@@ -60,7 +59,7 @@ export function updateBlog(blog, blogId) {
   formData.append('title', blog.title);
 
   const request = axios
-    .patch(`${BLOG_SERVER}/updateBlog/${blogId}`, formData, {
+    .patch(`${process.env.BLOG_SERVER}/updateBlog/${blogId}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
     .then((response) => response.data);
