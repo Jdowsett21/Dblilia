@@ -3,22 +3,30 @@ const router = express.Router();
 const { Blog } = require('../models/Blog');
 const multer = require('multer');
 const { auth } = require('../middleware/auth');
-const fs = require('fs');
-const path = require('path');
+const GridFsStorage = require('multer-gridfs-storage');
+const Grid = require('gridfs-stream');
+const mongoose = require('mongoose');
+const db = mongoose.connection;
+let gfs;
+db.once('open', function () {
+  gfs = Grid(db.db, mongoose.mongo);
+});
 //=================================
-//             User
+//             Blogs
 //=================================
 
-const storage = multer.diskStorage({
-  destination: (req, file, callback) => {
-    callback(null, `./client/public/uploads/${req.user._id}/blog/`);
-  },
-  filename: (req, file, callback) => {
-    callback(null, file.originalname);
+const storage = new GridFsStorage({
+  db: db,
+  file: (req, file) => {
+    return {
+      filename: file.originalname,
+      metadata: req.user._id,
+      bucketName: 'blogImages',
+    };
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage: storage }).single('blogImage');
 
 router.get('/getBlogs', auth, async (req, res) => {
   await Blog.find({ userId: req.user._id }, (err, doc) => {
@@ -28,61 +36,66 @@ router.get('/getBlogs', auth, async (req, res) => {
   });
 });
 
-router.post(
-  '/createBlog',
-  auth,
-  upload.single('blogImage'),
-  async (req, res) => {
-    const blog = new Blog({
-      title: req.body.title,
-      image: req.file.originalname,
-      userId: req.user._id,
+router.get('/blogImage/:filename', auth, (req, res) => {
+  gfs
+    .collection('blogImages')
+    .find({ filename: req.params.filename, metadata: req.user._id })
+    .toArray((err, files) => {
+      if (!files || files.length === 0) {
+        console.log(err);
+        return res.status(404).json({
+          message: 'Could not find file',
+        });
+      }
+      let readstream = gfs.createReadStream({
+        filename: files[0].filename,
+      });
+      res.set('Content-Type', files[0].contentType);
+      return readstream.pipe(res);
     });
+});
+router.post('/createBlog', auth, upload, async (req, res) => {
+  const blog = new Blog({
+    title: req.body.title,
+    image: req.file.originalname,
+    userId: req.user._id,
+  });
 
-    await blog.save((err, doc) => {
-      if (err) return res.json({ success: false, err });
-    });
-    res.status(200).send(blog);
-  }
-);
+  await blog.save((err, doc) => {
+    if (err) return res.json({ success: false, err });
+  });
+  res.status(200).send(blog);
+});
 
 router.delete('/deleteBlog/:id', auth, async (req, res) => {
   const blog = await Blog.findById(req.params.id);
 
-  console.log(
-    '🚀 ~ file: blogs.js ~ line 55 ~ router.delete ~ req.params.id',
-    req.params.id
-  );
-
-  const filePath = `./client/public/uploads/${req.user._id}/blog/${blog.image}`;
-
-  fs.unlink(`${filePath}`, (err) => {
-    if (err) throw err;
-    console.log(`${filePath} was successfully deleted`);
-  });
   await Blog.findByIdAndDelete(req.params.id, (err, doc) => {
     if (err) return res.json({ success: false, err });
     return res.status(200);
   });
 });
-
+router.delete('/deleteBlogImage/:filename', auth, (req, res) => {
+  gfs
+    .collection('blogImages')
+    .findOneAndDelete(
+      { filename: req.params.filename, metadata: req.user._id },
+      (err, doc) => {
+        if (err) return res.json({ success: false, err });
+        return res.status(200).send({
+          success: true,
+        });
+      }
+    );
+});
 router.patch(
   '/updateBlog/:id',
   auth,
   // uploading new image
-  upload.single('blogImage'),
+  upload,
   async (req, res) => {
     // find blog to find old image name
     const blog = await Blog.findById(req.params.id);
-
-    //isolate old image pathway
-    const filePath = `./client/public/uploads/${req.user._id}/blog/${blog.image}`;
-
-    // remove old image
-    fs.unlink(`${filePath}`, (err) => {
-      if (err) throw err;
-      console.log(`${filePath} was successfully deleted`);
-    });
 
     await Blog.findOneAndUpdate(
       { _id: req.params.id },

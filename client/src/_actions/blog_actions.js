@@ -5,6 +5,7 @@ import {
   DELETE_BLOG,
   GET_BLOG,
   ADD_OR_EDIT_BLOG,
+  DELETE_BLOG_IMAGE,
 } from './types';
 import FormData from 'form-data';
 import { fetch } from '../hoc/baseUrl';
@@ -38,6 +39,16 @@ export function deleteBlog(blog) {
   };
 }
 
+export function deleteBlogImage(image) {
+  const request = fetch
+    .delete(`/blog/deleteBlogImage/${image}`)
+    .then((response) => response.data);
+
+  return {
+    type: DELETE_BLOG_IMAGE,
+    payload: request,
+  };
+}
 export function getBlogs() {
   const request = fetch.get(`/blog/getBlogs`).then((response) => response.data);
 

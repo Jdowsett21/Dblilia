@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const blogSchema = mongoose.Schema({
   title: { type: String, max: 50 },
-  image: String,
+  image: { type: String, unique: true },
   userId: { type: mongoose.Schema.Types.ObjectId, required: true },
 });
 

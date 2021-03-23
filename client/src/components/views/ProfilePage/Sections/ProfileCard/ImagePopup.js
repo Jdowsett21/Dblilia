@@ -3,8 +3,7 @@ import { useDispatch, connect } from 'react-redux';
 import {
   updateProfileImage,
   auth,
-  getUpdatedProfile,
-  getProfileImages,
+  deleteOldProfile,
 } from '../../../../../_actions/user_actions';
 import { editImagePopup } from '../../../../../_actions/render_actions';
 
@@ -25,7 +24,7 @@ function ImagePopup({ userData }) {
     e.preventDefault();
     if (file !== '') {
       dispatch(updateProfileImage(file));
-      dispatch(getProfileImages());
+      dispatch(deleteOldProfile());
       dispatch(editImagePopup());
       setTimeout(() => {
         dispatch(auth());
@@ -50,7 +49,7 @@ function ImagePopup({ userData }) {
         <input
           type='file'
           accept='image/x-png,image/gif,image/jpeg'
-          filename='profileImage'
+          filename='defaultProfileImage'
           className='image__input'
           onChange={onChangeFile}
         />

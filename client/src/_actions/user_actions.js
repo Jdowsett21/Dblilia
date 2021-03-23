@@ -5,10 +5,11 @@ import {
   LOGOUT_USER,
   UPDATE_USER,
   UPDATE_USER_IMAGE,
-  GET_PROFILE_IMAGES,
+  DELETE_OLD_PROFILE,
 } from './types';
 import FormData from 'form-data';
 import { fetch } from '../hoc/baseUrl';
+
 export function registerUser(dataToSubmit) {
   const request = fetch
     .post(`/users/register`, dataToSubmit)
@@ -59,17 +60,16 @@ export function updateUser(dataToSubmit) {
   };
 }
 
-export function getProfileImages() {
+export function deleteOldProfile() {
   const request = fetch
-    .get(`/users/profileImages`)
+    .delete(`/users/oldProfile`)
     .then((response) => response.data);
 
   return {
-    type: GET_PROFILE_IMAGES,
+    type: DELETE_OLD_PROFILE,
     payload: request,
   };
 }
-
 export function updateProfileImage(values) {
   const formData = new FormData();
   formData.append('profileImage', values);

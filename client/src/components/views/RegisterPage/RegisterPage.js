@@ -31,6 +31,7 @@ const tailFormItemLayout = {
 };
 
 function RegisterPage(props) {
+  console.log(window.location.origin);
   const dispatch = useDispatch();
   return (
     <Formik
@@ -62,7 +63,7 @@ function RegisterPage(props) {
             name: values.name,
             // fixed error here leaving lastname undefined
             lastname: values.lastName,
-            image: `http://gravatar.com/avatar/${moment().unix()}?d=identicon`,
+            image: `${window.location.origin}/api/users/defaultProfile`,
           };
 
           dispatch(registerUser(dataToSubmit)).then((response) => {

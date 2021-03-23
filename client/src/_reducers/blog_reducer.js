@@ -3,6 +3,7 @@ import {
   GET_BLOG,
   UPDATE_BLOG,
   DELETE_BLOG,
+  DELETE_BLOG_IMAGE,
   ADD_OR_EDIT_BLOG,
   SET_CURRENT_BLOG,
 } from '../_actions/types';
@@ -34,6 +35,8 @@ export default function (state = initialState, action) {
 
     case DELETE_BLOG:
       return { ...state, deleteSuccess: action.payload };
+    case DELETE_BLOG:
+      return { ...state, deleteImageSuccess: action.payload };
     case SET_CURRENT_BLOG:
       return { ...state, currentBlog: action.payload };
 

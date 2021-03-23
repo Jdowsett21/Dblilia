@@ -1,11 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import ImagePopup from './ImagePopup';
 import { useDispatch } from 'react-redux';
 import { editImagePopup } from '../../../../../_actions/render_actions';
 
 function ProfileImage({ userData, render: { editProfile, editImage } }) {
-  const newImage = `http://localhost:3000/api/users/image/${userData.image}`;
+  const [profileImage, setProfileImage] = useState('');
+
+  useEffect(() => {
+    !userData.originalImage &&
+      setProfileImage(
+        `${window.location.origin}${process.env.REACT_APP_API_URL}/users/image/${userData.image}`
+      );
+  }, [userData.image]);
+
   const dispatch = useDispatch();
 
   const onClick = () => {
@@ -16,7 +24,7 @@ function ProfileImage({ userData, render: { editProfile, editImage } }) {
     <>
       <div className='profile-card__image-section'>
         <img
-          src={userData.originalImage ? `${userData.image}` : newImage}
+          src={userData.originalImage ? `${userData.image}` : profileImage}
           alt='profile'
           className={
             editProfile

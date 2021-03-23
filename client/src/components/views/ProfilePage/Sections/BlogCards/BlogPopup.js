@@ -6,6 +6,7 @@ import {
   updateBlog,
   addBlog,
   setCurrentBlog,
+  deleteBlogImage,
 } from '../../../../../_actions/blog_actions';
 import { editBlogPopup } from '../../../../../_actions/render_actions';
 
@@ -33,10 +34,6 @@ function BlogPopup({ blog: { currentBlog, addOrEdit } }) {
 
   const changeOnClick = (e) => {
     e.preventDefault();
-    console.log(
-      '🚀 ~ file: BlogPopup.js ~ line 52 ~ changeOnClick ~ e.target.value',
-      e.target.value
-    );
 
     if (title !== '' || file !== '') {
       const blog = {
@@ -45,7 +42,8 @@ function BlogPopup({ blog: { currentBlog, addOrEdit } }) {
       };
       addOrEdit
         ? dispatch(addBlog(blog))
-        : dispatch(updateBlog(blog, currentBlog._id));
+        : dispatch(updateBlog(blog, currentBlog._id)) &&
+          dispatch(deleteBlogImage(currentBlog.image));
       dispatch(editBlogPopup());
       setTimeout(() => {
         dispatch(getBlogs());

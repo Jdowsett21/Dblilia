@@ -16,11 +16,24 @@ db.once('open', function () {
 //             User
 //=================================
 
+// setup to get default profile image for all users
+// const originalProfileImage = new GridFsStorage({
+//   db: db,
+//   file: (req, file) => {
+//     return {
+//       filename: file.originalname,
+//       bucketName: 'defaultProfileImages',
+//     };
+//   },
+// });
+
 const storage = new GridFsStorage({
   db: db,
   file: (req, file) => {
     return {
       filename: file.originalname,
+      metadata: req.user._id,
+      bucketName: 'profileImages',
     };
   },
 });
@@ -29,20 +42,40 @@ const upload = multer({
   storage,
 }).single('profileImage');
 
-router.get('/image/:filename', (req, res) => {
-  console.log(req.params.filename);
-  gfs.files.find({ filename: req.params.filename }).toArray((err, files) => {
-    if (!files || files.length === 0) {
-      return res.status(404).json({
-        message: 'Could not find file',
+router.get('/defaultProfile', (req, res) => {
+  gfs
+    .collection('defaultProfileImages')
+    .find()
+    .toArray((err, files) => {
+      if (!files || files.length === 0) {
+        return res.status(404).json({
+          message: 'Could not find files',
+        });
+      }
+      let readstream = gfs.createReadStream({
+        filename: files[0].filename,
       });
-    }
-    let readstream = gfs.createReadStream({
-      filename: files[0].filename,
+      res.set('Content-Type', files[0].contentType);
+      return readstream.pipe(res);
     });
-    res.set('Content-Type', files[0].contentType);
-    return readstream.pipe(res);
-  });
+});
+
+router.get('/image/:filename', auth, (req, res) => {
+  gfs
+    .collection('profileImages')
+    .find({ filename: req.params.filename, metadata: req.user._id })
+    .toArray((err, files) => {
+      if (!files || files.length === 0) {
+        return res.status(404).json({
+          message: 'Could not find file',
+        });
+      }
+      let readstream = gfs.createReadStream({
+        filename: files[0].filename,
+      });
+      res.set('Content-Type', files[0].contentType);
+      return readstream.pipe(res);
+    });
 });
 
 router.get('/auth', auth, (req, res) => {
@@ -65,34 +98,6 @@ router.post('/register', (req, res) => {
   user.save((err, doc) => {
     if (err) return res.json({ success: false, err });
     else {
-      // createFolder(
-      //   path.join(__dirname, `../../client/public/uploads/`) + `${user._id}`,
-      //   0744,
-      //   function (err) {
-      //     if (err) return res.json({ success: false, err });
-      //   }
-      // );
-      // setTimeout(() => {
-      //   createFolder(
-      //     path.join(__dirname, `../../client/public/uploads/${user._id}/`) +
-      //       'blog',
-      //     0744,
-      //     function (err) {
-      //       if (err) return res.json({ success: false, err });
-      //     }
-      //   );
-      // }, 500);
-      // setTimeout(() => {
-      //   createFolder(
-      //     path.join(__dirname, `../../client/public/uploads/${user._id}/`) +
-      //       'profile',
-      //     0744,
-      //     function (err) {
-      //       if (err) return res.json({ success: false, err });
-      //     }
-      //   );
-      // }, 500);
-
       return res.status(200).json({
         success: true,
       });
@@ -155,21 +160,19 @@ router.put('/update', auth, (req, res) => {
   );
 });
 
-router.get('/profileImages', (req, res) => {
-  gfs.files.find().toArray((err, files) => {
-    if(!files || files.length === 0){
-      return res.status(404).json({
-        message: "Could not find files"
-      });
-    }
-    return res.json(files);
-});
-
-router.delete('/deleteImage/', (req, res) => {
-  gfs.remove({ _id: req.params.id }, (err) => {
-    if (err) return res.status(500).json({ success: false });
-    return res.json({ success: true });
-  });
+router.delete('/oldProfile', auth, (req, res) => {
+  gfs
+    .collection('profileImages')
+    .findOneAndDelete(
+      { metadata: req.user._id },
+      { sort: { uploadDate: 1 } },
+      (err, doc) => {
+        if (err) return res.json({ success: false, err });
+        return res.status(200).send({
+          success: true,
+        });
+      }
+    );
 });
 
 router.patch(

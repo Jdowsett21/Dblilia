@@ -21,10 +21,11 @@ export const EDIT_BLOGS = 'edit_blogs';
 export const ADD_BLOG = 'add_blog';
 export const UPDATE_BLOG = 'update_blog';
 export const GET_BLOG = 'get_blog';
-export const DELETE_BLOG = 'delete_image';
+export const DELETE_BLOG = 'delete_blog';
+export const DELETE_BLOG_IMAGE = 'delete_blog_image';
 
 export const SET_CURRENT_BLOG = 'set_current_blog';
 
 export const ADD_OR_EDIT_BLOG = 'add_or_edit_blog';
 
-export const GET_PROFILE_IMAGES = 'get_profile_images';
+export const DELETE_OLD_PROFILE = 'delete_old_profile';

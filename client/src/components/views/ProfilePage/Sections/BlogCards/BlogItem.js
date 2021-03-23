@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { editBlogPopup } from '../../../../../_actions/render_actions';
 import { useDispatch } from 'react-redux';
 import {
   deleteBlog,
+  deleteBlogImage,
   setAddOrEdit,
   setCurrentBlog,
   getBlogs,
@@ -10,6 +11,7 @@ import {
 import { Link } from 'react-router-dom';
 import sprite from '../../../../../img/sprite.svg';
 function BlogItem({ blog }) {
+  const [backgroundImage, setBackgroundImage] = useState('');
   const dispatch = useDispatch();
 
   const onClickView = () => {
@@ -23,11 +25,17 @@ function BlogItem({ blog }) {
 
   const onClickDelete = () => {
     dispatch(deleteBlog(blog));
+    dispatch(deleteBlogImage(blog.image));
     setTimeout(() => {
       dispatch(getBlogs());
     }, 500);
   };
-  const backgroundImage = `/uploads/${blog.userId}/blog/${blog.image}`;
+  useEffect(() => {
+    setBackgroundImage(
+      `${window.location.origin}${process.env.REACT_APP_API_URL}/blog/blogImage/${blog.image}`
+    );
+  }, [blog.image]);
+
   return (
     <div className=' blog__item'>
       <div className='blog__title-section'>
