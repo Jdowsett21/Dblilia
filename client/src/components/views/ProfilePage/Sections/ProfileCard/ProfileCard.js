@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import ProfileImage from './ProfileImage';
 import { connect, useDispatch } from 'react-redux';
-import EditProfileCard from './EditProfile';
+import EditProfileCard from './EditProfileCard';
 import { auth } from '../../../../../_actions/user_actions';
 import ProfileInfoSection from './ProfileInfoSection';
 

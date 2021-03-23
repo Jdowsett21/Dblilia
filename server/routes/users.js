@@ -42,42 +42,6 @@ const upload = multer({
   storage,
 }).single('profileImage');
 
-router.get('/defaultProfile', (req, res) => {
-  gfs
-    .collection('defaultProfileImages')
-    .find()
-    .toArray((err, files) => {
-      if (!files || files.length === 0) {
-        return res.status(404).json({
-          message: 'Could not find files',
-        });
-      }
-      let readstream = gfs.createReadStream({
-        filename: files[0].filename,
-      });
-      res.set('Content-Type', files[0].contentType);
-      return readstream.pipe(res);
-    });
-});
-
-router.get('/image/:filename', auth, (req, res) => {
-  gfs
-    .collection('profileImages')
-    .find({ filename: req.params.filename, metadata: req.user._id })
-    .toArray((err, files) => {
-      if (!files || files.length === 0) {
-        return res.status(404).json({
-          message: 'Could not find file',
-        });
-      }
-      let readstream = gfs.createReadStream({
-        filename: files[0].filename,
-      });
-      res.set('Content-Type', files[0].contentType);
-      return readstream.pipe(res);
-    });
-});
-
 router.get('/auth', auth, (req, res) => {
   res.status(200).json({
     _id: req.user._id,
@@ -142,6 +106,41 @@ router.get('/logout', auth, (req, res) => {
   );
 });
 
+router.get('/defaultProfile', (req, res) => {
+  gfs
+    .collection('defaultProfileImages')
+    .find()
+    .toArray((err, files) => {
+      if (!files || files.length === 0) {
+        return res.status(404).json({
+          message: 'Could not find files',
+        });
+      }
+      let readstream = gfs.createReadStream({
+        filename: files[0].filename,
+      });
+      res.set('Content-Type', files[0].contentType);
+      return readstream.pipe(res);
+    });
+});
+
+router.get('/image/:filename', auth, (req, res) => {
+  gfs
+    .collection('profileImages')
+    .find({ filename: req.params.filename, metadata: req.user._id })
+    .toArray((err, files) => {
+      if (!files || files.length === 0) {
+        return res.status(404).json({
+          message: 'Could not find file',
+        });
+      }
+      let readstream = gfs.createReadStream({
+        filename: files[0].filename,
+      });
+      res.set('Content-Type', files[0].contentType);
+      return readstream.pipe(res);
+    });
+});
 // UPDATES USER INFORMATOIN
 router.put('/update', auth, (req, res) => {
   User.findOneAndUpdate(
