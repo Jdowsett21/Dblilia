@@ -1,7 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 function Banner({ currentBlog }) {
-  const backgroundImage = `/uploads/${currentBlog.userId}/blog/${currentBlog.image}`;
+  const [backgroundImage, setBackgroundImage] = useState('');
+
+  useEffect(() => {
+    setBackgroundImage(
+      `${window.location.origin}${process.env.REACT_APP_API_URL}/blog/blogImage/${currentBlog.image}`
+    );
+  }, [currentBlog.image]);
+
   return (
     <div className='banner'>
       <img className='banner__img' src={backgroundImage} alt='First slide' />
