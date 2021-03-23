@@ -1,39 +1,49 @@
 const express = require('express');
 const router = express.Router();
 const { User } = require('../models/User');
+const mongoose = require('mongoose');
 const multer = require('multer');
 const { auth } = require('../middleware/auth');
-const fs = require('fs');
-const path = require('path');
+const GridFsStorage = require('multer-gridfs-storage');
+const Grid = require('gridfs-stream');
+
+const db = mongoose.connection;
+let gfs;
+db.once('open', function () {
+  gfs = Grid(db.db, mongoose.mongo);
+});
 //=================================
 //             User
 //=================================
 
-const storage = multer.diskStorage({
-  destination: (req, file, callback) => {
-    callback(null, `./client/public/uploads/${req.user._id}/profile/`);
-  },
-  filename: (req, file, callback) => {
-    callback(null, file.originalname);
+const storage = new GridFsStorage({
+  db: db,
+  file: (req, file) => {
+    return {
+      filename: file.originalname,
+    };
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({
+  storage,
+}).single('profileImage');
 
-function createFolder(path, mask, cb) {
-  if (typeof mask == 'function') {
-    // allow the `mask` parameter to be optional
-    cb = mask;
-    mask = 0777;
-  }
-  fs.mkdir(path, mask, function (err) {
-    if (err) {
-      if (err.code == 'EEXIST') cb(null);
-      // ignore the error if the folder already exists
-      else cb(err); // something else went wrong
-    } else cb(null); // successfully created folder
+router.get('/image/:filename', (req, res) => {
+  console.log(req.params.filename);
+  gfs.files.find({ filename: req.params.filename }).toArray((err, files) => {
+    if (!files || files.length === 0) {
+      return res.status(404).json({
+        message: 'Could not find file',
+      });
+    }
+    let readstream = gfs.createReadStream({
+      filename: files[0].filename,
+    });
+    res.set('Content-Type', files[0].contentType);
+    return readstream.pipe(res);
   });
-}
+});
 
 router.get('/auth', auth, (req, res) => {
   res.status(200).json({
@@ -55,33 +65,33 @@ router.post('/register', (req, res) => {
   user.save((err, doc) => {
     if (err) return res.json({ success: false, err });
     else {
-      createFolder(
-        path.join(__dirname, `../../client/public/uploads/`) + `${user._id}`,
-        0744,
-        function (err) {
-          if (err) return res.json({ success: false, err });
-        }
-      );
-      setTimeout(() => {
-        createFolder(
-          path.join(__dirname, `../../client/public/uploads/${user._id}/`) +
-            'blog',
-          0744,
-          function (err) {
-            if (err) return res.json({ success: false, err });
-          }
-        );
-      }, 500);
-      setTimeout(() => {
-        createFolder(
-          path.join(__dirname, `../../client/public/uploads/${user._id}/`) +
-            'profile',
-          0744,
-          function (err) {
-            if (err) return res.json({ success: false, err });
-          }
-        );
-      }, 500);
+      // createFolder(
+      //   path.join(__dirname, `../../client/public/uploads/`) + `${user._id}`,
+      //   0744,
+      //   function (err) {
+      //     if (err) return res.json({ success: false, err });
+      //   }
+      // );
+      // setTimeout(() => {
+      //   createFolder(
+      //     path.join(__dirname, `../../client/public/uploads/${user._id}/`) +
+      //       'blog',
+      //     0744,
+      //     function (err) {
+      //       if (err) return res.json({ success: false, err });
+      //     }
+      //   );
+      // }, 500);
+      // setTimeout(() => {
+      //   createFolder(
+      //     path.join(__dirname, `../../client/public/uploads/${user._id}/`) +
+      //       'profile',
+      //     0744,
+      //     function (err) {
+      //       if (err) return res.json({ success: false, err });
+      //     }
+      //   );
+      // }, 500);
 
       return res.status(200).json({
         success: true,
@@ -145,29 +155,29 @@ router.put('/update', auth, (req, res) => {
   );
 });
 
+router.get('/profileImages', (req, res) => {
+  gfs.files.find().toArray((err, files) => {
+    if(!files || files.length === 0){
+      return res.status(404).json({
+        message: "Could not find files"
+      });
+    }
+    return res.json(files);
+});
+
+router.delete('/deleteImage/', (req, res) => {
+  gfs.remove({ _id: req.params.id }, (err) => {
+    if (err) return res.status(500).json({ success: false });
+    return res.json({ success: true });
+  });
+});
+
 router.patch(
   '/uploadProfile',
   auth,
   // uploading new image
-  upload.single('profileImage'),
+  upload,
   (req, res) => {
-    const filePath = `./client/public/uploads/${req.user._id}/profile/`;
-
-    // searching through image files in the individuals profile folder
-    fs.readdir(filePath, (err, files) => {
-      if (err) throw err;
-      files.filter((file) => {
-        // must search through files as file might not exists
-        // filtering out most recent upload
-        if (file !== req.file.originalname)
-          // if file is not newest upload then delete the file
-          fs.unlink(`${filePath}${file}`, (err) => {
-            if (err) throw err;
-            console.log(`${filePath}${file} was successfully deleted`);
-          });
-      });
-    });
-
     User.findOneAndUpdate(
       { _id: req.user._id },
       {

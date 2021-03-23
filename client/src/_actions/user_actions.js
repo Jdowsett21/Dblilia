@@ -1,4 +1,3 @@
-import axios from 'axios';
 import {
   LOGIN_USER,
   REGISTER_USER,
@@ -6,6 +5,7 @@ import {
   LOGOUT_USER,
   UPDATE_USER,
   UPDATE_USER_IMAGE,
+  GET_PROFILE_IMAGES,
 } from './types';
 import FormData from 'form-data';
 import { fetch } from '../hoc/baseUrl';
@@ -50,15 +50,22 @@ export function logoutUser() {
 }
 
 export function updateUser(dataToSubmit) {
-  console.log(
-    '🚀 ~ file: user_actions.js ~ line 58 ~ updateUser ~ dataToSubmit',
-    dataToSubmit
-  );
   const request = fetch
     .put(`/users/update`, dataToSubmit)
     .then((response) => response.data);
   return {
     type: UPDATE_USER,
+    payload: request,
+  };
+}
+
+export function getProfileImages() {
+  const request = fetch
+    .get(`/users/profileImages`)
+    .then((response) => response.data);
+
+  return {
+    type: GET_PROFILE_IMAGES,
     payload: request,
   };
 }

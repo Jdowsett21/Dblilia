@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { updateProfileImage, auth } from '../../../../../_actions/user_actions';
+import { useDispatch, connect } from 'react-redux';
+import {
+  updateProfileImage,
+  auth,
+  getUpdatedProfile,
+  getProfileImages,
+} from '../../../../../_actions/user_actions';
 import { editImagePopup } from '../../../../../_actions/render_actions';
-function ImagePopup(props) {
+
+function ImagePopup({ userData }) {
   const dispatch = useDispatch();
   const [file, setFileName] = useState('');
   const onChangeFile = (e) => {
@@ -12,7 +18,6 @@ function ImagePopup(props) {
 
   const onClose = (e) => {
     e.preventDefault();
-    e.stopPropogation();
     setFileName('');
     dispatch(editImagePopup());
   };
@@ -20,8 +25,11 @@ function ImagePopup(props) {
     e.preventDefault();
     if (file !== '') {
       dispatch(updateProfileImage(file));
+      dispatch(getProfileImages());
       dispatch(editImagePopup());
-      dispatch(auth());
+      setTimeout(() => {
+        dispatch(auth());
+      }, 500);
     }
     e.target.value = null;
     setFileName('');
@@ -53,5 +61,8 @@ function ImagePopup(props) {
     </>
   );
 }
+const mapStateToProps = (state) => ({
+  userData: state.user.userData,
+});
 
-export default ImagePopup;
+export default connect(mapStateToProps)(ImagePopup);

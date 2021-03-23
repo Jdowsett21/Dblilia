@@ -26,3 +26,5 @@ export const DELETE_BLOG = 'delete_image';
 export const SET_CURRENT_BLOG = 'set_current_blog';
 
 export const ADD_OR_EDIT_BLOG = 'add_or_edit_blog';
+
+export const GET_PROFILE_IMAGES = 'get_profile_images';

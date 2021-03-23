@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { editImagePopup } from '../../../../../_actions/render_actions';
 
 function ProfileImage({ userData, render: { editProfile, editImage } }) {
-  const newImage = `uploads/${userData._id}/profile/${userData.image}`;
+  const newImage = `http://localhost:3000/api/users/image/${userData.image}`;
   const dispatch = useDispatch();
 
   const onClick = () => {
@@ -55,5 +55,6 @@ function ProfileImage({ userData, render: { editProfile, editImage } }) {
 
 const mapStatetoProps = (state) => ({
   render: state.render,
+  userData: state.user.userData,
 });
 export default connect(mapStatetoProps)(ProfileImage);

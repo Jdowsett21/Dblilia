@@ -5,6 +5,7 @@ import {
   LOGOUT_USER,
   UPDATE_USER,
   UPDATE_USER_IMAGE,
+  GET_PROFILE_IMAGES,
 } from '../_actions/types';
 
 export default function (state = '', action) {
@@ -19,7 +20,8 @@ export default function (state = '', action) {
       return { ...state, updateInfoSuccess: action.payload };
     case UPDATE_USER_IMAGE:
       return { ...state, updateProfileImage: action.payload };
-
+    case GET_PROFILE_IMAGES:
+      return { ...state, profileImages: action.payload };
     case LOGOUT_USER:
       return { ...state };
     default:
