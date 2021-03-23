@@ -63,6 +63,7 @@ function RegisterPage(props) {
             name: values.name,
             // fixed error here leaving lastname undefined
             lastname: values.lastName,
+            // DEFAULT IMAGE IS LOADED FROM DEFAULTPROFILIMAGE BUCKET IN USER ROUTES
             image: `${window.location.origin}/api/users/defaultProfile`,
           };
 

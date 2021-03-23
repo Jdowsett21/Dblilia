@@ -14,15 +14,22 @@ function BlogItem({ blog }) {
   const [backgroundImage, setBackgroundImage] = useState('');
   const dispatch = useDispatch();
 
+  // SETS CURRENT BLOG IN BLOG STATE TO SELECTED BLOG
   const onClickView = () => {
     dispatch(setCurrentBlog(blog));
   };
+
+  // TRIGGERS BlopPopup COMPONENT, SET addOrEdit to false
+  // BlogPopup will be set to edit
+  // SETS SELECTED BLOG AS currentBlog so title will appear in Blogpopup FORM TITLE
   const onClickEdit = () => {
     dispatch(editBlogPopup());
     dispatch(setAddOrEdit(false));
     dispatch(setCurrentBlog(blog));
   };
 
+  // TRIGGERS DELETION OF BLOG IN BLOG COLLECTION AND BLOG IMAGE IN BLOGIMAGES BUCKET
+  // RERENDERS BLOG AFTER SMALL TIMEOUT TO DISPLAY BLOGS WITHOUT DELETE BLOG
   const onClickDelete = () => {
     dispatch(deleteBlog(blog));
     dispatch(deleteBlogImage(blog.image));
@@ -30,6 +37,8 @@ function BlogItem({ blog }) {
       dispatch(getBlogs());
     }, 500);
   };
+
+  // RERENDERS DISPLAY OF BLOG IMAGE UPON BLOG IMAGE CHANGE
   useEffect(() => {
     setBackgroundImage(
       `${window.location.origin}${process.env.REACT_APP_API_URL}/blog/blogImage/${blog.image}`
@@ -47,12 +56,14 @@ function BlogItem({ blog }) {
         alt='blog background'
       />
       <div className='blog__item__hover-gradient'>
+        {/* GARBAGE ICON WHICH DELETES BLOGS */}
         <svg
           className='blog__item__button blog__item__button--trash'
           onClick={onClickDelete}
         >
           <use href={sprite + '#trash'}></use>
         </svg>
+        {/* LINK WIHICH SETS CURRENT  BLOG AND GOES TO SELECTED BLOG */}
         <Link
           className='blog__item__button blog__item__button--view'
           to='/blog'
@@ -61,6 +72,7 @@ function BlogItem({ blog }) {
         >
           View Blog
         </Link>
+        {/* SETS BLOGPOPUP TO EDIT AND TRIGGERS BLOGPOPUP FORM */}
         <a
           href='#!'
           className='blog__item__button blog__item__button--edit'

@@ -10,6 +10,7 @@ import {
 import FormData from 'form-data';
 import { fetch } from '../hoc/baseUrl';
 
+// REGISTER NEW USER
 export function registerUser(dataToSubmit) {
   const request = fetch
     .post(`/users/register`, dataToSubmit)
@@ -21,6 +22,7 @@ export function registerUser(dataToSubmit) {
   };
 }
 
+// LOG IN USER
 export function loginUser(dataToSubmit) {
   const request = fetch
     .post(`/users/login`, dataToSubmit)
@@ -32,6 +34,7 @@ export function loginUser(dataToSubmit) {
   };
 }
 
+// AUTHENTICATE AND GET USER INFORMATION
 export function auth() {
   const request = fetch.get(`/users/auth`).then((response) => response.data);
 
@@ -40,7 +43,7 @@ export function auth() {
     payload: request,
   };
 }
-
+// LOGOUT USER
 export function logoutUser() {
   const request = fetch.get(`/users/logout`).then((response) => response.data);
 
@@ -60,6 +63,8 @@ export function updateUser(dataToSubmit) {
   };
 }
 
+//// CLEANUP FUNCTION THAT REMOVES OLD PROFILE IMAGE FROM profileImages bucket
+// DOES NOT REMOVE INITAL PROFILE IMAGE FOR ALL USERS FROM defaultProfileImages bucket
 export function deleteOldProfile() {
   const request = fetch
     .delete(`/users/oldProfile`)
@@ -70,8 +75,12 @@ export function deleteOldProfile() {
     payload: request,
   };
 }
+
+// UPLOAD NEW USER PROFILE IMAGE
 export function updateProfileImage(values) {
   const formData = new FormData();
+
+  // PROFILE IMAGE IS IN FORM DATA FROM HTML FORM
   formData.append('profileImage', values);
 
   const request = fetch

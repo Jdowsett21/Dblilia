@@ -14,9 +14,13 @@ function LeftMenu({ mode, blog: { blogList } }) {
         <a href='/'>Home</a>
       </Menu.Item>
       <SubMenu title={<span>Blogs</span>}>
+        {/* BLOG IS AUTOMATICALLY ADDED TO DROPDOWN MENU UPON CREATION
+        AND DISPLAYED BY TITLE */}
         {blogList.map((blog) => (
           <Menu.Item
             key={blog._id}
+            // BLOG SELECTED IN DROPDOWN IS SET TO CURRENT BLOG
+            // CURRENT BLOG IS PULLED IN BlogPage AND DISPLAYED
             onClick={() => dispatch(setCurrentBlog(blog))}
           >
             <NavLink to='/blog'>{blog.title}</NavLink>

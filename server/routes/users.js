@@ -142,6 +142,7 @@ router.get('/logout', auth, (req, res) => {
   );
 });
 
+// UPDATES USER INFORMATOIN
 router.put('/update', auth, (req, res) => {
   User.findOneAndUpdate(
     { _id: req.user._id },
@@ -160,6 +161,10 @@ router.put('/update', auth, (req, res) => {
   );
 });
 
+// DELETES OLD PROFILE IMAGE
+// PROFILE BUCKET SHOULD ONLY EVER HAVE MAX 2 IMAGES
+// OLD IMAGE AND NEW UPLOAD,
+// PROFILE IMAGE ARE FOUND BY USER AND THE OLDEST IMAGE IS DELETED
 router.delete('/oldProfile', auth, (req, res) => {
   gfs
     .collection('profileImages')
@@ -175,6 +180,10 @@ router.delete('/oldProfile', auth, (req, res) => {
     );
 });
 
+// UPLOAD NEW PROFILE IMAGE
+// SETS ORIGINALIMAGE TO FALSE
+// SETTING UP FRONT END TO TOGGLE IMAGE FROM PROFILE IMAGE BUCKET
+// NOT DEFAULT PROFILE IMAGE BUCKET
 router.patch(
   '/uploadProfile',
   auth,

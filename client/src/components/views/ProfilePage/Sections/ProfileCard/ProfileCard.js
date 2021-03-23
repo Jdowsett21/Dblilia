@@ -13,8 +13,8 @@ function ProfileCard({ render: { editProfile, editImage }, user }) {
 
   return (
     <div className='profile-card'>
-      {/* editData switches between displaying data and form to edit data */}
       <h1 className='profile-card__header'>Profile Card</h1>
+      {/* TOGGLES BETWEEN DISPLAYING USER DATA AND FORM TO EDIT USER DATA */}
       {editProfile ? (
         <EditProfileCard userData={user} />
       ) : (

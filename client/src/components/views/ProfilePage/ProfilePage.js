@@ -7,7 +7,9 @@ import { Redirect } from 'react-router';
 function ProfilePage({ userData }) {
   return (
     <>
+      {/* REDIRECTS USER TO LOGIN PAGE IF TOKEN EXPIRES */}
       {userData && !userData.isAuth && <Redirect to='/login' />}
+      {/* ONLY SENDS USER DATA ONCE LOADED */}
       {userData && <ProfileCard userData={userData} />}
       <BlogCards />
     </>

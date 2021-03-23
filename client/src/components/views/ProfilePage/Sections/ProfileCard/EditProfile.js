@@ -31,7 +31,8 @@ const tailFormItemLayout = {
 
 function EditProfileCard(props) {
   const dispatch = useDispatch();
-  console.log(props.userData);
+
+  // FORM TO EDIT USER INFORMATION IN PROFILE CARD
   return (
     <div className='profile-card__info-section'>
       <h2 className='profile-card__info-header'>Profile Info</h2>
@@ -41,7 +42,6 @@ function EditProfileCard(props) {
             email: props.userData.email,
             lastName: props.userData.lastname,
             name: props.userData.name,
-            password: '',
           }}
           validationSchema={Yup.object().shape({
             name: Yup.string().required('Name is required'),
@@ -60,6 +60,7 @@ function EditProfileCard(props) {
 
               dispatch(updateUser(dataToSubmit)).then((response) => {
                 if (response.payload.success) {
+                  // UPDATES PROFILE INFORMATION
                   dispatch(editProfile());
                 } else {
                   alert(response.payload.err.errmsg);

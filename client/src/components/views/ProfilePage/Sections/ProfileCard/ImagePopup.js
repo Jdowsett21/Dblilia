@@ -7,29 +7,46 @@ import {
 } from '../../../../../_actions/user_actions';
 import { editImagePopup } from '../../../../../_actions/render_actions';
 
-function ImagePopup({ userData }) {
+function ImagePopup() {
   const dispatch = useDispatch();
+
+  // PROFILE IMAGE STATE INFO
   const [file, setFileName] = useState('');
+
+  // SET PROFILE IMAGE VALUE
   const onChangeFile = (e) => {
     e.preventDefault();
     setFileName(e.target.files[0]);
   };
 
+  // RESETS INFORMATION
+  // CLOSES POPUP
   const onClose = (e) => {
     e.preventDefault();
     setFileName('');
     dispatch(editImagePopup());
   };
+
+  // SUBMITS FORMS
   const changeOnClick = (e) => {
+    // PREVENTS PAGE RELOAD
     e.preventDefault();
+
+    // ONLY SUBMITS IF FILE SELECTED
     if (file !== '') {
+      // UPLOADS NEW PROFILE IMAGE TO PROFILEIMAGE BUCKET
       dispatch(updateProfileImage(file));
+      // DELETES OLD PROFILE IMAGE
       dispatch(deleteOldProfile());
+      // CLOSES POPUP
       dispatch(editImagePopup());
+
+      // RERENDERS NEW PROFILE IMAGE
       setTimeout(() => {
         dispatch(auth());
       }, 500);
     }
+    // RESETS ALL VALUES
     e.target.value = null;
     setFileName('');
   };
@@ -48,7 +65,7 @@ function ImagePopup({ userData }) {
         </label>
         <input
           type='file'
-          accept='image/x-png,image/gif,image/jpeg'
+          accept='image/png,image/jpeg'
           filename='defaultProfileImage'
           className='image__input'
           onChange={onChangeFile}

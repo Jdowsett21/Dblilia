@@ -28,14 +28,17 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-// Serve static assets if in production
+// HEROKU CODE TO DEPLOY STATIC FILES
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
 }
+// USER ROUTES
 app.use('/api/users', require('./routes/users'));
+
+// BLOG ROUTES
 app.use('/api/blog', require('./routes/blogs'));
 
-// index.html for all page routes    html or routing and naviagtion
+// HEROKU CODE FOR ROUTING AND RELOADING PAGES
 if (process.env.NODE_ENV === 'production') {
   app.get('*', (req, res) => {
     res.sendFile(

@@ -22,39 +22,52 @@ function BlogPopup({ blog: { currentBlog, addOrEdit } }) {
     setFileName(e.target.files[0]);
   };
 
+  // SETS TITLE STATE UPON INPUT CHANGE OF TITLE FIELD
   const onChangeTitle = (e) => {
     setTitle(e.target.value);
   };
 
+  // RESETS FORM INFO IF FILE IS CLOSED
   const onClose = () => {
     setFileName('');
     dispatch(setCurrentBlog(''));
     dispatch(editBlogPopup());
   };
 
+  // ON SUBMIT FORM FUNCTION
   const changeOnClick = (e) => {
+    // PREVENT PAGE RELOAD
     e.preventDefault();
 
+    // FORM DOESNT SUBMIT IF TITLE AND FILE ARENT ADDED
     if (title !== '' || file !== '') {
       const blog = {
         image: file,
         title: title,
       };
+      // EITHER ADDS OR EDITS BLOG BASED ON addOrEdit
+      // PREVIOUS TOGGLED BY ADD BLOG OR EDIT  BLOG
       addOrEdit
         ? dispatch(addBlog(blog))
         : dispatch(updateBlog(blog, currentBlog._id)) &&
+          // IF EDIT BLOG, ALSO DELETES OLD BLOG IMAGE FROM BLOGIMAGES BUCKET
           dispatch(deleteBlogImage(currentBlog.image));
+
+      // BLOG POPUP IS CLOSED
       dispatch(editBlogPopup());
+
+      // RERENDERS BLOGLIST AFTER SMALL TIMEOUT
       setTimeout(() => {
         dispatch(getBlogs());
       }, 500);
     }
-
+    // RESETS FORM VALUES AND STATE VALUES
     e.target.value = null;
     setFileName('');
     setTitle('');
     setCurrentBlog('');
   };
+
   return (
     <>
       <form
@@ -62,6 +75,7 @@ function BlogPopup({ blog: { currentBlog, addOrEdit } }) {
         onSubmit={changeOnClick}
         encType='multipart/form-data'
       >
+        {/* CLOSES POPUP */}
         <button className='popup__close' onClick={onClose}>
           &times;
         </button>
@@ -71,6 +85,7 @@ function BlogPopup({ blog: { currentBlog, addOrEdit } }) {
           placeholder={title}
           value={title}
           className='text__input'
+          // CHANGES TITLE STATE
           onChange={onChangeTitle}
         />
         <label htmlFor='file' className='image__label'>
@@ -78,9 +93,10 @@ function BlogPopup({ blog: { currentBlog, addOrEdit } }) {
         </label>
         <input
           type='file'
-          accept='image/x-png,image/gif,image/jpeg'
+          accept='image/png,image/jpeg'
           filename='blogImage'
           className='image__input'
+          // CHANGES FILE STATE
           onChange={onChangeFile}
         />
         <button type='submit' className='image__button'>

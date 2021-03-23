@@ -8,6 +8,8 @@ function ProfileImage({ userData, render: { editProfile, editImage } }) {
   const [profileImage, setProfileImage] = useState('');
 
   useEffect(() => {
+    // IF USER HAS UPDATED PROFILE IMAGE
+    // DISPLAYS NEW PROFILE IMAGE
     !userData.originalImage &&
       setProfileImage(
         `${window.location.origin}${process.env.REACT_APP_API_URL}/users/image/${userData.image}`
@@ -17,6 +19,7 @@ function ProfileImage({ userData, render: { editProfile, editImage } }) {
   const dispatch = useDispatch();
 
   const onClick = () => {
+    // TOGGLES POPUP TO EDIT PROFILE IMAGE
     dispatch(editImagePopup());
   };
 
@@ -24,9 +27,11 @@ function ProfileImage({ userData, render: { editProfile, editImage } }) {
     <>
       <div className='profile-card__image-section'>
         <img
+          // DISPLAYS DEFAULT PROFILE IMAGE OR NEW PROFILE IMAGE IF UPDATED
           src={userData.originalImage ? `${userData.image}` : profileImage}
           alt='profile'
           className={
+            // CHANGES PROFILE IMAGE PLACEMENT BASED ON PROFILE INFO IN EDIT OR VIEW MODE
             editProfile
               ? 'profile-card__image : profile-card__image--edit'
               : 'profile-card__image'
@@ -35,7 +40,9 @@ function ProfileImage({ userData, render: { editProfile, editImage } }) {
 
         <a
           href='#!'
+          // TOGGLES PROFILE IMAGE POPUP FORM
           onClick={onClick}
+          // CHANGES BUTTON PLACEMENT BASED ON PROFILE INFO IN EDIT OR VIEW MODE
           className={
             editProfile
               ? 'profile-card__button--edit profile-card__button'
@@ -46,6 +53,7 @@ function ProfileImage({ userData, render: { editProfile, editImage } }) {
         </a>
       </div>
 
+      {/* FORM IS HIDDEN IF editImage is false */}
       <div className={editImage ? 'popup popup--visible' : 'popup'}>
         <div
           className={

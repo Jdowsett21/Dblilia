@@ -11,6 +11,10 @@ function Blog({ blog: { currentBlog, blogList } }) {
   }, [dispatch]);
   return (
     <div>
+      {/* IF BLOG PAGE IS  VISITED BY CLICKING ON BLOG IN NAV BAR
+       ALL BLOGS WILL DISPLAY
+       IF ONE BLOG IS SELECTED FROM DROPDOWN MENU OR VIEW BLOG BUTTON IN VIEW CARDS, 
+       THAT BLOG WILL DISPLAY */}
       {currentBlog === '' ? (
         blogList.map((blogItem) => <Banner currentBlog={blogItem} />)
       ) : (
